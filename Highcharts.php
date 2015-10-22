@@ -13,9 +13,15 @@ use mpf\base\Widget;
 use mpf\web\AssetsPublisher;
 use mpf\web\helpers\Html;
 
-class Highchart extends Widget{
+class Highchart extends Widget {
 
     protected static $counter = 0;
+
+    /**
+     * Container ID;
+     * @var string
+     */
+    public $id;
 
     /**
      * List of modules to load from highcharts folder %ASSETs%/js/modules/{name}.js
@@ -24,10 +30,16 @@ class Highchart extends Widget{
     public $modules = [];
 
     /**
-     *
+     * Chart options
      * @var string[]
      */
-    public $char;
+    public $chart;
+
+    /**
+     * Html options for the container.
+     * @var string[]
+     */
+    public $htmlOptions;
 
     public $title;
     public $subtitle;
@@ -37,19 +49,83 @@ class Highchart extends Widget{
     public $legend;
     public $series;
 
+    /**
+     * Any extra options from Highchart that is not covered in the above params;
+     * @var string[]
+     */
+    public $options = [];
 
-    public function display(){
-        $return = $this->assets();
+    /**
+     * Setup options that are called before a new highchart
+     * @var string[]
+     */
+    public $setupOptions = [];
 
+    /**
+     * If you want to manually init the chart later then fill the name of the method to be created here. Then you can call this method when
+     * you want to init the chart.
+     * @var string
+     */
+    public $callback;
 
+    /**
+     * Constructor from Highcharts js class. Default is "Chart"
+     * @var string
+     */
+    protected $constr = 'Chart';
 
-        return $return;
+    /**
+     * Process dev options;
+     * @param array $config
+     * @return null
+     * @throws \Exception
+     */
+    protected function init($config = []) {
+        if (!$this->id) {
+            if (isset($this->htmlOptions['id'])) {
+                $this->id = $this->htmlOptions['id'];
+            } else {
+                $this->id = "highchart" . (self::$counter++);
+            }
+        }
+        $this->htmlOptions['id'] = $this->id;
+        foreach (['chart', 'title', 'subtitle', 'xAxis', 'yAxis', 'tooltip', 'legend', 'series'] as $option) {
+            if ($this->$option) { // if any of the options in the list above are set then it will add them to options array
+                $this->options[$option] = $this->$option;
+            }
+        }
+        return parent::init($config);
     }
 
-    public function assets(){
+    /**
+     * Will display assets, tag and js code. If you want to manually do any of this steps you can call assets() or jsCode()
+     * methods separated and ignore this method.
+     * @return string
+     */
+    public function display() {
+        return $this->assets()
+        . Html::get()->tag("div", "", $this->htmlOptions)
+        . $this->jsCode();
+    }
+
+    /**
+     * @return string
+     */
+    public function jsCode() {
+        $setup = json_encode($this->setupOptions);
+        $options = json_encode($this->options);
+        $js = "Highcharts.setOptions($setup); new Highcharts.{$this->constr}($options);";
+        return Html::get()->script($this->callback ? ("function {$this->callback}(data) {$js}") : $js);
+    }
+
+    public function assets() {
         $assetsURL = AssetsPublisher::get()->publishFolder(__DIR__ . DIRECTORY_SEPARATOR . 'assets');
-        return Html::get()->mpfScriptFile('jquery.js')
-            . Html::get()->scriptFile($assetsURL ."js/highcharts.js");
+        $r = Html::get()->mpfScriptFile('jquery.js')
+            . Html::get()->scriptFile($assetsURL . "js/highcharts.js");
+        foreach ($this->modules as $module) {
+            $r .= Html::get()->scriptFile($assetsURL . "js/$module.js");
+        }
+        return $r;
     }
 
 } 
