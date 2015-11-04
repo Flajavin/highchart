@@ -13,7 +13,7 @@ use mpf\base\Widget;
 use mpf\web\AssetsPublisher;
 use mpf\web\helpers\Html;
 
-class Highchart extends Widget {
+class Highcharts extends Widget {
 
     protected static $counter = 0;
 
