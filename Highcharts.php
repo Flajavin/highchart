@@ -94,6 +94,7 @@ class Highcharts extends Widget {
                 $this->options[$option] = $this->$option;
             }
         }
+        $this->options['chart']['renderTo'] = $this->id;
         return parent::init($config);
     }
 
