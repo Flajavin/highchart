@@ -12,6 +12,7 @@ namespace mpf\components\highchart;
 use mpf\base\Widget;
 use mpf\web\AssetsPublisher;
 use mpf\web\helpers\Html;
+use mpf\web\helpers\JSON;
 
 class Highcharts extends Widget {
 
@@ -113,8 +114,8 @@ class Highcharts extends Widget {
      * @return string
      */
     public function jsCode() {
-        $setup = json_encode($this->setupOptions);
-        $options = json_encode($this->options);
+        $setup = JSON::encode($this->setupOptions);
+        $options = JSON::encode($this->options);
         $js = "Highcharts.setOptions($setup); new Highcharts.{$this->constr}($options);";
         return Html::get()->script($this->callback ? ("function {$this->callback}(data) {$js}") : $js);
     }
