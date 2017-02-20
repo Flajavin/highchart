@@ -4,17 +4,17 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highcharts Example</title>
 
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 		<style type="text/css">
 #container {
-	min-width: 300px;
-	max-width: 600px;
-	margin: 0 auto;
+    min-width: 300px;
+    max-width: 600px;
+    margin: 0 auto;
 }
 		</style>
 		<script type="text/javascript">
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         series: [{
             type: "treemap",
             layoutAlgorithm: 'stripes',
@@ -95,8 +95,8 @@ $(function () {
 		</script>
 	</head>
 	<body>
-<script src="../../js/highcharts.js"></script>
-<script src="../../js/modules/treemap.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/treemap.js"></script>
 <div id="container"></div>
 	</body>
 </html>

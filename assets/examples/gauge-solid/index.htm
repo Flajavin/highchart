@@ -4,9 +4,11 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highcharts Example</title>
 
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 		<style type="text/css">
-${demo.css}
+.highcharts-yaxis-grid .highcharts-grid-line {
+	display: none;
+}
 		</style>
 		<script type="text/javascript">
 $(function () {
@@ -45,8 +47,7 @@ $(function () {
             ],
             lineWidth: 0,
             minorTickInterval: null,
-            tickPixelInterval: 400,
-            tickWidth: 0,
+            tickAmount: 2,
             title: {
                 y: -70
             },
@@ -67,7 +68,7 @@ $(function () {
     };
 
     // The speed gauge
-    $('#container-speed').highcharts(Highcharts.merge(gaugeOptions, {
+    var chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptions, {
         yAxis: {
             min: 0,
             max: 200,
@@ -96,7 +97,7 @@ $(function () {
     }));
 
     // The RPM gauge
-    $('#container-rpm').highcharts(Highcharts.merge(gaugeOptions, {
+    var chartRpm = Highcharts.chart('container-rpm', Highcharts.merge(gaugeOptions, {
         yAxis: {
             min: 0,
             max: 5,
@@ -123,13 +124,12 @@ $(function () {
     // Bring life to the dials
     setInterval(function () {
         // Speed
-        var chart = $('#container-speed').highcharts(),
-            point,
+        var point,
             newVal,
             inc;
 
-        if (chart) {
-            point = chart.series[0].points[0];
+        if (chartSpeed) {
+            point = chartSpeed.series[0].points[0];
             inc = Math.round((Math.random() - 0.5) * 100);
             newVal = point.y + inc;
 
@@ -141,9 +141,8 @@ $(function () {
         }
 
         // RPM
-        chart = $('#container-rpm').highcharts();
-        if (chart) {
-            point = chart.series[0].points[0];
+        if (chartRpm) {
+            point = chartRpm.series[0].points[0];
             inc = Math.random() - 0.5;
             newVal = point.y + inc;
 
@@ -157,17 +156,18 @@ $(function () {
 
 
 });
+
 		</script>
 	</head>
 	<body>
-<script src="../../js/highcharts.js"></script>
-<script src="../../js/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
 
-<script src="../../js/modules/solid-gauge.js"></script>
+<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
 
 <div style="width: 600px; height: 400px; margin: 0 auto">
-	<div id="container-speed" style="width: 300px; height: 200px; float: left"></div>
-	<div id="container-rpm" style="width: 300px; height: 200px; float: left"></div>
+    <div id="container-speed" style="width: 300px; height: 200px; float: left"></div>
+    <div id="container-rpm" style="width: 300px; height: 200px; float: left"></div>
 </div>
 
 
