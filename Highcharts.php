@@ -14,7 +14,8 @@ use mpf\web\AssetsPublisher;
 use mpf\web\helpers\Html;
 use mpf\web\helpers\JSON;
 
-class Highcharts extends Widget {
+class Highcharts extends Widget
+{
 
     protected static $counter = 0;
 
@@ -76,12 +77,19 @@ class Highcharts extends Widget {
     protected $constr = 'Chart';
 
     /**
+     * If there's a call for variable then it will generate a var name for the graph
+     * @var string
+     */
+    public $variable;
+
+    /**
      * Process dev options;
      * @param array $config
      * @return null
      * @throws \Exception
      */
-    protected function init($config = []) {
+    protected function init($config = [])
+    {
         if (!$this->id) {
             if (isset($this->htmlOptions['id'])) {
                 $this->id = $this->htmlOptions['id'];
@@ -104,28 +112,36 @@ class Highcharts extends Widget {
      * methods separated and ignore this method.
      * @return string
      */
-    public function display() {
+    public function display()
+    {
         return $this->assets()
-        . Html::get()->tag("div", "", $this->htmlOptions)
-        . $this->jsCode();
+            . Html::get()->tag("div", "", $this->htmlOptions)
+            . $this->jsCode();
     }
 
     /**
      * @return string
      */
-    public function jsCode() {
+    public function jsCode()
+    {
+        if ($this->variable) {
+            $variable = "var {$this->variable} = ";
+        } else {
+            $variable = "";
+        }
         $setup = JSON::encode($this->setupOptions);
         $options = JSON::encode($this->options);
-        $js = "Highcharts.setOptions($setup); new Highcharts.{$this->constr}($options);";
+        $js = "Highcharts.setOptions($setup); $variable new Highcharts.{$this->constr}($options);";
         return Html::get()->script($this->callback ? ("function {$this->callback}(data) {$js}") : $js);
     }
 
-    public function assets() {
+    public function assets()
+    {
         $assetsURL = AssetsPublisher::get()->publishFolder(__DIR__ . DIRECTORY_SEPARATOR . 'assets');
         $r = Html::get()->mpfScriptFile('jquery.js')
             . Html::get()->scriptFile($assetsURL . "js/highcharts.js");
         foreach ($this->modules as $module) {
-            $r .= Html::get()->scriptFile($assetsURL . "js/$module.js");
+            $r .= Html::get()->scriptFile($assetsURL . "js/modules/$module.js");
         }
         return $r;
     }
